@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLOCK</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#111;
+    color:white;
+}
+
+/* LOGIN */
+
+.login-box{
+    width:350px;
+    background:#1b1b1b;
+    padding:30px;
+    border-radius:15px;
+    margin:auto;
+    margin-top:80px;
+}
+
+.login-box h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    outline:none;
+    border-radius:8px;
+    background:#2b2b2b;
+    color:white;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:8px;
+    background:#2f6df6;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:#1e56cf;
+}
+
+/* WEBSITE */
+
+.website{
+    display:none;
+}
+
+.sidebar{
+    width:220px;
+    height:100vh;
+    background:#151515;
+    padding:20px;
+    position:fixed;
+}
+
+.logo{
+    font-size:34px;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    color:white;
+    background:#1f1f1f;
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.menu a:hover{
+    background:#2a2a2a;
+}
+
+.content{
+    margin-left:240px;
+    padding:40px;
+}
+
+/* PROFILE */
+
+.profile-card{
+    background:#1b1b1b;
+    padding:25px;
+    border-radius:15px;
+    width:400px;
+}
+
+.profile-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.username{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.handle{
+    color:gray;
+    margin-top:5px;
+}
+
+.dots{
+    background:#2a2a2a;
+    border:none;
+    color:white;
+    width:40px;
+    height:40px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.menu-popup{
+    display:none;
+    background:#222;
+    padding:10px;
+    border-radius:10px;
+    margin-top:10px;
+    width:200px;
+}
+
+.menu-popup button{
+    margin:0;
+}
+
+#error{
+    color:red;
+    text-align:center;
+    margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+
+<div class="login-box" id="loginPage">
+
+    <h1>BLOCK</h1>
+
+    <input type="text" id="signupUser" placeholder="Username">
+    <input type="password" id="signupPass" placeholder="Password">
+
+    <button onclick="signup()">Sign Up</button>
+
+    <br><br>
+
+    <input type="text" id="loginUser" placeholder="Username">
+    <input type="password" id="loginPass" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <div id="error"></div>
+
+</div>
+
+<!-- WEBSITE -->
+
+<div class="website" id="website">
+
+    <div class="sidebar">
+
+        <div class="logo">BLOCK</div>
+
+        <div class="menu">
+            <a href="#" onclick="showHome()">🏠 Home</a>
+            <a href="#" onclick="showProfile()">👤 Profile</a>
+        </div>
+
+    </div>
+
+    <div class="content">
+
+        <!-- HOME -->
+
+        <div id="homePage">
+
+            <h1>Welcome to BLOCK</h1>
+            <br>
+            <p>Your homepage</p>
+
+        </div>
+
+        <!-- PROFILE -->
+
+        <div id="profilePage" style="display:none;">
+
+            <div class="profile-card">
+
+                <div class="profile-top">
+
+                    <div>
+
+                        <div class="username" id="displayName"></div>
+                        <div class="handle" id="handle"></div>
+
+                    </div>
+
+                    <button class="dots" onclick="toggleMenu()">⋯</button>
+
+                </div>
+
+                <div class="menu-popup" id="popupMenu">
+
+                    <button onclick="editDisplayName()">
+                        Edit Display Name
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* SAVED USERS */
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+/* AUTO LOGIN */
+
+if(currentUser){
+    openWebsite();
+}
+
+/* SIGN UP */
+
+function signup(){
+
+    let username = document.getElementById("signupUser").value;
+    let password = document.getElementById("signupPass").value;
+
+    let error = document.getElementById("error");
+
+    if(username === "" || password === ""){
+        error.innerText = "Fill everything";
+        return;
+    }
+
+    let taken = users.find(
+        user => user.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if(taken){
+        error.innerText = "Username already taken";
+        return;
+    }
+
+    let user = {
+        username: username,
+        password: password,
+        displayName: username
+    };
+
+    users.push(user);
+
+    localStorage.setItem("users", JSON.stringify(users));
+
+    currentUser = user;
+
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+    openWebsite();
+}
+
+/* LOGIN */
+
+function login(){
+
+    let username = document.getElementById("loginUser").value;
+    let password = document.getElementById("loginPass").value;
+
+    let error = document.getElementById("error");
+
+    let user = users.find(
+        user =>
+        user.username === username &&
+        user.password === password
+    );
+
+    if(!user){
+        error.innerText = "Wrong username or password";
+        return;
+    }
+
+    currentUser = user;
+
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+    openWebsite();
+}
+
+/* OPEN WEBSITE */
+
+function openWebsite(){
+
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("website").style.display = "block";
+
+    updateProfile();
+}
+
+/* UPDATE PROFILE */
+
+function updateProfile(){
+
+    document.getElementById("displayName").innerText =
+        currentUser.displayName;
+
+    document.getElementById("handle").innerText =
+        "@" + currentUser.username;
+}
+
+/* SHOW PAGES */
+
+function showHome(){
+
+    document.getElementById("homePage").style.display = "block";
+    document.getElementById("profilePage").style.display = "none";
+}
+
+function showProfile(){
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("profilePage").style.display = "block";
+}
+
+/* MENU */
+
+function toggleMenu(){
+
+    let menu = document.getElementById("popupMenu");
+
+    if(menu.style.display === "block"){
+        menu.style.display = "none";
+    }else{
+        menu.style.display = "block";
+    }
+}
+
+/* EDIT DISPLAY NAME */
+
+function editDisplayName(){
+
+    let newName = prompt("New Display Name:");
+
+    if(!newName) return;
+
+    currentUser.displayName = newName;
+
+    /* UPDATE USERS */
+
+    users = users.map(user => {
+
+        if(user.username === currentUser.username){
+            return currentUser;
+        }
+
+        return user;
+    });
+
+    localStorage.setItem("users", JSON.stringify(users));
+
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+    updateProfile();
+
+    document.getElementById("popupMenu").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
