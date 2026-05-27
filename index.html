@@ -46,7 +46,7 @@ button:hover{
     background:#3a3a3a;
 }
 
-/* WEBSITE LAYOUT */
+/* WEBSITE */
 
 .website{
     display:none;
@@ -94,12 +94,6 @@ button:hover{
     padding:25px;
     border-radius:15px;
     width:400px;
-}
-
-.profile-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
 }
 
 .username{
@@ -191,15 +185,11 @@ button:hover{
 
             <div class="profile-card">
 
-                <div class="profile-top">
+                <button class="dots" onclick="toggleMenu()">⋯</button>
 
-                    <div>
-                        <div class="username" id="displayName"></div>
-                        <div class="handle" id="handle"></div>
-                    </div>
-
-                    <button class="dots" onclick="toggleMenu()">⋯</button>
-
+                <div style="margin-top:15px;">
+                    <div class="username" id="displayName"></div>
+                    <div class="handle" id="handle"></div>
                 </div>
 
                 <div class="menu-popup" id="popupMenu">
@@ -228,7 +218,7 @@ button:hover{
 let users = JSON.parse(localStorage.getItem("users")) || [];
 let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-/* START STATE */
+/* AUTO LOGIN */
 if(currentUser){
     openWebsite();
 }
@@ -294,16 +284,13 @@ function login(){
 
 /* OPEN */
 function openWebsite(){
-
     document.getElementById("loginPage").style.display = "none";
     document.getElementById("website").style.display = "block";
-
     updateProfile();
 }
 
-/* PROFILE UPDATE */
+/* PROFILE */
 function updateProfile(){
-
     document.getElementById("displayName").innerText = currentUser.displayName;
     document.getElementById("handle").innerText = "@" + currentUser.username;
 }
@@ -344,7 +331,6 @@ function editDisplayName(){
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
     updateProfile();
-
     document.getElementById("popupMenu").style.display = "none";
 }
 
