@@ -2,83 +2,68 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLOCK</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial;
-}
 
 body{
-    background:#111;
+    margin:0;
+    font-family:Arial;
+    background:#0f0f0f;
     color:white;
 }
 
 /* LOGIN */
 
 .login-box{
-    width:350px;
-    background:#1b1b1b;
-    padding:30px;
-    border-radius:15px;
-    margin:auto;
-    margin-top:80px;
-}
-
-.login-box h1{
+    width:300px;
+    margin:100px auto;
+    background:#1a1a1a;
+    padding:20px;
+    border-radius:12px;
     text-align:center;
-    margin-bottom:20px;
 }
 
 input{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
+    width:90%;
+    padding:10px;
+    margin:8px 0;
     border:none;
-    outline:none;
     border-radius:8px;
-    background:#2b2b2b;
-    color:white;
+    outline:none;
 }
 
 button{
-    width:100%;
-    padding:12px;
-    margin-top:15px;
+    padding:10px 15px;
     border:none;
     border-radius:8px;
-    background:#2f6df6;
+    background:#2a2a2a;
     color:white;
     cursor:pointer;
-    font-size:16px;
 }
 
 button:hover{
-    background:#1e56cf;
+    background:#3a3a3a;
 }
 
-/* WEBSITE */
+/* WEBSITE LAYOUT */
 
 .website{
     display:none;
 }
 
 .sidebar{
-    width:220px;
+    width:200px;
     height:100vh;
     background:#151515;
-    padding:20px;
     position:fixed;
+    padding:20px;
 }
 
 .logo{
-    font-size:34px;
+    font-size:24px;
     font-weight:bold;
-    margin-bottom:30px;
+    margin-bottom:20px;
 }
 
 .menu a{
@@ -147,21 +132,18 @@ button:hover{
     width:200px;
 }
 
-.menu-popup button{
-    margin:0;
-}
-
 #error{
     color:red;
     text-align:center;
     margin-top:10px;
 }
+
 </style>
 </head>
+
 <body>
 
 <!-- LOGIN -->
-
 <div class="login-box" id="loginPage">
 
     <h1>BLOCK</h1>
@@ -183,7 +165,6 @@ button:hover{
 </div>
 
 <!-- WEBSITE -->
-
 <div class="website" id="website">
 
     <div class="sidebar">
@@ -200,17 +181,12 @@ button:hover{
     <div class="content">
 
         <!-- HOME -->
-
         <div id="homePage">
-
             <h1>Welcome to BLOCK</h1>
-            <br>
             <p>Your homepage</p>
-
         </div>
 
         <!-- PROFILE -->
-
         <div id="profilePage" style="display:none;">
 
             <div class="profile-card">
@@ -218,10 +194,8 @@ button:hover{
                 <div class="profile-top">
 
                     <div>
-
                         <div class="username" id="displayName"></div>
                         <div class="handle" id="handle"></div>
-
                     </div>
 
                     <button class="dots" onclick="toggleMenu()">⋯</button>
@@ -232,6 +206,10 @@ button:hover{
 
                     <button onclick="editDisplayName()">
                         Edit Display Name
+                    </button>
+
+                    <button onclick="logout()">
+                        Logout
                     </button>
 
                 </div>
@@ -246,24 +224,20 @@ button:hover{
 
 <script>
 
-/* SAVED USERS */
-
+/* DATA */
 let users = JSON.parse(localStorage.getItem("users")) || [];
 let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-/* AUTO LOGIN */
-
+/* START STATE */
 if(currentUser){
     openWebsite();
 }
 
 /* SIGN UP */
-
 function signup(){
 
     let username = document.getElementById("signupUser").value;
     let password = document.getElementById("signupPass").value;
-
     let error = document.getElementById("error");
 
     if(username === "" || password === ""){
@@ -272,7 +246,7 @@ function signup(){
     }
 
     let taken = users.find(
-        user => user.username.toLowerCase() === username.toLowerCase()
+        u => u.username.toLowerCase() === username.toLowerCase()
     );
 
     if(taken){
@@ -291,25 +265,20 @@ function signup(){
     localStorage.setItem("users", JSON.stringify(users));
 
     currentUser = user;
-
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
     openWebsite();
 }
 
 /* LOGIN */
-
 function login(){
 
     let username = document.getElementById("loginUser").value;
     let password = document.getElementById("loginPass").value;
-
     let error = document.getElementById("error");
 
     let user = users.find(
-        user =>
-        user.username === username &&
-        user.password === password
+        u => u.username === username && u.password === password
     );
 
     if(!user){
@@ -318,14 +287,12 @@ function login(){
     }
 
     currentUser = user;
-
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
     openWebsite();
 }
 
-/* OPEN WEBSITE */
-
+/* OPEN */
 function openWebsite(){
 
     document.getElementById("loginPage").style.display = "none";
@@ -334,72 +301,57 @@ function openWebsite(){
     updateProfile();
 }
 
-/* UPDATE PROFILE */
-
+/* PROFILE UPDATE */
 function updateProfile(){
 
-    document.getElementById("displayName").innerText =
-        currentUser.displayName;
-
-    document.getElementById("handle").innerText =
-        "@" + currentUser.username;
+    document.getElementById("displayName").innerText = currentUser.displayName;
+    document.getElementById("handle").innerText = "@" + currentUser.username;
 }
 
-/* SHOW PAGES */
-
+/* NAV */
 function showHome(){
-
     document.getElementById("homePage").style.display = "block";
     document.getElementById("profilePage").style.display = "none";
 }
 
 function showProfile(){
-
     document.getElementById("homePage").style.display = "none";
     document.getElementById("profilePage").style.display = "block";
 }
 
 /* MENU */
-
 function toggleMenu(){
-
     let menu = document.getElementById("popupMenu");
-
-    if(menu.style.display === "block"){
-        menu.style.display = "none";
-    }else{
-        menu.style.display = "block";
-    }
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-/* EDIT DISPLAY NAME */
-
+/* EDIT NAME */
 function editDisplayName(){
 
     let newName = prompt("New Display Name:");
-
     if(!newName) return;
 
     currentUser.displayName = newName;
 
-    /* UPDATE USERS */
-
-    users = users.map(user => {
-
-        if(user.username === currentUser.username){
-            return currentUser;
+    for(let i = 0; i < users.length; i++){
+        if(users[i].username === currentUser.username){
+            users[i] = currentUser;
+            break;
         }
-
-        return user;
-    });
+    }
 
     localStorage.setItem("users", JSON.stringify(users));
-
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
     updateProfile();
 
     document.getElementById("popupMenu").style.display = "none";
+}
+
+/* LOGOUT */
+function logout(){
+    localStorage.removeItem("currentUser");
+    location.reload();
 }
 
 </script>
